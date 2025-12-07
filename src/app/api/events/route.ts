@@ -69,13 +69,13 @@ export async function GET(request: Request) {
                     newThreat = threatLevels[Math.floor(Math.random() * threatLevels.length)]
                 } while (newThreat === serverState.anomalies[anomalyIndex].threat)
 
-                // Обновляем состояние сервера
+                //  состояние сервера
                 serverState.anomalies[anomalyIndex] = {
                     ...serverState.anomalies[anomalyIndex],
                     threat: newThreat,
                 }
 
-                // Отправляем обновление клиентам
+                //  обновление клиентам
                 sendEvent({
                     type: 'threatUpdate',
                     payload: {
@@ -85,7 +85,7 @@ export async function GET(request: Request) {
                 })
             }, 5000)
 
-            // Обрабатываем закрытие соединения
+            //  закрытие соединения
             signal.addEventListener('abort', () => {
                 isConnectionClosed = true
                 if (intervalId) clearInterval(intervalId)
@@ -93,13 +93,13 @@ export async function GET(request: Request) {
                 try {
                     streamController.close()
                 } catch (error) {
-                    // Игнорируем ошибку, если контроллер уже закрыт
+
                 }
 
                 console.log('SSE connection closed by client')
             })
 
-            // Обработка закрытия соединения со стороны клиента
+            // закрытие соединения со стороны клиента
             request.signal.addEventListener('abort', () => {
                 isConnectionClosed = true
                 if (intervalId) clearInterval(intervalId)
