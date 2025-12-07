@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  yokai-monitoring-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: dependencies
+    container_name: yokai-dashboard-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    command: pnpm run dev
+    stdin_open: true
+    tty: true
+    networks:
+      - yokai-network-dev
+
+networks:
+  yokai-network-dev:
+    driver: bridge

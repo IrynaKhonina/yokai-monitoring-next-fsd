@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  yokai-dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: yokai-dashboard:latest
+    container_name: yokai-monitoring-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      - PORT=3000
+    restart: unless-stopped
+    networks:
+      - yokai-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/anomalies"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - yokai-logs:/app/logs
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+networks:
+  yokai-network:
+    driver: bridge
+
+volumes:
+  yokai-logs:
+    driver: local
